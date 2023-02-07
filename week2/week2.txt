@@ -1,0 +1,257 @@
+1)---
+create table employee(
+  EmpNo number(7),
+  EmpName varchar(15) NOT NULL,
+  Gender varchar(1) NOT NULL,
+  Salary number(10,2) NOT NULL,
+  Address varchar(30) NOT NULL,
+  Dno varchar(10)
+ );
+
+alter table employee add PRIMARY KEY(EmpNo);
+
+alter table employee add constraint gender check (gender ='M' or gender='F');
+
+2)---
+create table department(
+ DeptNo number(8) PRIMARY KEY,
+ DeptName varchar(20) unique,
+ Location varchar(20)
+ );
+
+3)---
+ alter table employee add constraint Fk_D foreign key(Dno) references Department(DeptNo);
+
+4)---
+insert into department values(1,'cse','delhi');
+insert into employee values(1,'rohan','M',12000,'delhi',1);
+insert into department values(2,'mech','mumbai');
+insert into employee values(2,'yogi','F',12500,'dubai',2);
+
+5)---
+insert into department values(,'mech','mumbai');
+insert into employee values(3,'yogi','Female',12500,'dubai',3);
+insert into employee values(2,'yogi','F',12500,'dubai',3);
+
+6)---
+ delete from department where DeptNo=2;
+
+7)---
+ alter table employee drop constraint Fk_D;
+ alter table employee add constraint Fk_D foreign key(Dno) references Department(DeptNo) on delete cascade;
+
+
+8)---
+alter table employee modify(Salary number(10,2) default (10000));
+insert into employee(EmpNo,EmpName,Gender,Address,Dno) values(4,'hitesh','M','dubai',2);
+
+
+rename employee to ee;
+rename department to d_e;
+
+9)---
+ @ "C:\Users\Student\Desktop\SQL_Aryan\week2\University.sql"
+ @ "C:\Users\Student\Desktop\SQL_Aryan\week2\smallRelations.sql"
+
+select name,dept_name from student;
+
+10)---
+ select * from Instructor where dept_name = 'Comp. Sci.';
+
+ID    NAME                 DEPT_NAME                SALARY
+----- -------------------- -------------------- ----------
+10101 Srinivasan           Comp. Sci.                65000
+45565 Katz                 Comp. Sci.                75000
+83821 Brandt               Comp. Sci.                92000
+
+11)---
+select title from course where dept_name='Comp. Sci.' and credits = 3;
+
+Robotics
+Image Processing
+Database System Concepts
+
+12)---
+ select takes.course_id, course.title from takes,course,student where Student.ID=12345 and student.id=takes.id and takes.course_id=course.course_id;
+
+
+COURSE_I TITLE
+-------- --------------------------------------------------
+CS-101   Intro. to Computer Science
+CS-190   Game Design
+CS-315   Robotics
+CS-347   Database System Concepts
+
+13)---
+ select * from instructor where salary between 40000 and 90000;
+
+ID    NAME                 DEPT_NAME                SALARY
+----- -------------------- -------------------- ----------
+10101 Srinivasan           Comp. Sci.                65000
+12121 Wu                   Finance                   90000
+15151 Mozart               Music                     40000
+32343 El Said              History                   60000
+33456 Gold                 Physics                   87000
+45565 Katz                 Comp. Sci.                75000
+58583 Califieri            History                   62000
+76543 Singh                Finance                   80000
+76766 Crick                Biology                   72000
+98345 Kim                  Elec. Eng.                80000
+
+14)---
+SELECT  instructor.ID FROM instructor WHERE id NOT IN (SELECT ID FROM teaches);
+
+ID
+-----
+33456
+58583
+76543
+
+15)---
+SELECT student.name, course.title, takes.year FROM student, section, course, takes WHERE room_number=303 and course.course_id = section.course_id and course.course_id = takes.course_id and takes.id = student.id and takes.year = section.year and takes.sec_id = section.sec_id and section.semester = takes.semester;
+
+no rows selected
+16)---
+SELECT name, course.course_id, course.title as c_name FROM student, section, course, takes WHERE takes.year=2015 and course.course_id = section.course_id and course.course_id = takes.course_id and takes.id = student.id and takes.year = section.year and takes.sec_id = section.sec_id and section.semester = takes.semester;
+
+no rows selected
+17)---
+SELECT name, salary as inst_salary FROM instructor where salary > (SELECT MIN(salary) FROM instructor WHERE dept_name ='Comp. Sci.' );
+
+
+NAME                 INST_SALARY
+-------------------- -----------
+Wu                         90000
+Einstein                   95000
+Gold                       87000
+Katz                       75000
+Singh                      80000
+Crick                      72000
+Brandt                     92000
+Kim                        80000
+
+18)---
+select name from instructor where lower(dept_name) like '%ch%';
+
+no rows selected
+
+19)---
+select name,length(name) from student;
+NAME                 LENGTH(NAME)
+-------------------- ------------
+Zhang                           5
+Shankar                         7
+Brandt                          6
+Chavez                          6
+Peltier                         7
+Levy                            4
+Williams                        8
+Sanchez                         7
+Snow                            4
+Brown                           5
+Aoi                             3
+
+NAME                 LENGTH(NAME)
+-------------------- ------------
+Bourikas                        8
+Tanaka                          6
+
+13 rows selected.
+
+20)---
+select dept_name,SUBSTR(dept_name,3,3) from department;
+
+
+DEPT_NAME            SUB
+-------------------- ---
+Biology              olo
+Comp. Sci.           mp.
+Elec. Eng.           ec.
+Finance              nan
+History              sto
+Music                sic
+Physics              ysi
+
+7 rows selected.
+
+21)---
+select UPPER(name) from instructor;
+
+UPPER(NAME)
+--------------------
+SRINIVASAN
+WU
+MOZART
+EINSTEIN
+EL SAID
+GOLD
+KATZ
+CALIFIERI
+SINGH
+CRICK
+BRANDT
+
+UPPER(NAME)
+--------------------
+KIM
+
+12 rows selected.
+
+22)---
+select nvl(grade,'F') from takes;
+
+NV
+--
+A
+A-
+C
+A
+A
+A
+B
+C+
+B-
+F
+B+
+
+NV
+--
+B
+A-
+B+
+A-
+A
+A
+C
+C-
+B
+A
+F
+
+22 rows selected.
+
+23)---
+ select salary,ROUND(salary/3,2) from instructor;
+
+    SALARY ROUND(SALARY/3,2)
+---------- -----------------
+     65000          21666.67
+     90000             30000
+     40000          13333.33
+     95000          31666.67
+     60000             20000
+     87000             29000
+     75000             25000
+     62000          20666.67
+     80000          26666.67
+     72000             24000
+     92000          30666.67
+
+    SALARY ROUND(SALARY/3,2)
+---------- -----------------
+     80000          26666.67
+
+12 rows selected.
+
+24)---
+rename ee to employee;
