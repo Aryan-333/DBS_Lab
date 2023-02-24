@@ -1,0 +1,192 @@
+1. Find courses that ran in Fall 2009 or in Spring 2010
+--  (select course_id,title from course natural join section where semester='Fall' and year=2009)
+    UNION
+    (select course_id,title from course natural join section where semester='Spring' and year=2010);
+
+COURSE_I TITLE
+-------- --------------------------------------------------
+CS-101   Intro. to Computer Science
+CS-315   Robotics
+CS-319   Image Processing
+CS-347   Database System Concepts
+FIN-201  Investment Banking
+HIS-351  World History
+MU-199   Music Video Production
+PHY-101  Physical Principles
+
+8 rows selected.
+
+
+2. Find courses that ran in Fall 2009 and in spring 2010
+--  (select course_id,title from course natural join section where semester='Fall' and year=2009)
+intersect
+(select course_id,title from course natural join section where semester='Spring' and year=2010);
+
+COURSE_I TITLE
+-------- --------------------------------------------------
+CS-101   Intro. to Computer Science
+
+
+3. Find courses that ran in Fall 2009 but not in Spring 2010
+-- (select course_id,title from course natural join section where semester='Fall' and year=2009)
+MINUS
+(select course_id,title from course natural join section where semester='Spring' and year=2010);
+
+COURSE_I TITLE
+-------- --------------------------------------------------
+CS-347   Database System Concepts
+PHY-101  Physical Principles
+
+
+4. Find the name of the course for which none of the students registered.
+--  select course_id from course
+    minus
+    select course_id from takes;
+
+COURSE_I
+--------
+BIO-399
+
+
+
+5. Find courses offered in Fall 2009 and in Spring 2010.
+--  select course_id , title from course natural join section where semester = 'Fall' and year = 2009 and course_id in (select course_id from course natural join section where semester = 'Spring' and year = 2010);
+
+COURSE_I TITLE
+-------- --------------------------------------------------
+CS-101   Intro. to Computer Science
+
+
+
+6. Find the total number of students who have taken course taught by the instructor 
+with ID 10101
+--  select count(id) from takes where course_id in (select course_id from teaches where id = 10101);
+
+ COUNT(ID)
+----------
+        11
+
+
+7. Find courses offered in Fall 2009 but not in Spring 2010.
+--  select course_id from course natural join section where semester = 'Fall' and year = 2009 and course_id not in (select course_id from course natural join section where semester = 'Spring' and year = 2010);
+
+COURSE_I
+--------
+CS-347
+PHY-101
+
+
+/// while using in/not in always make sure same column should be requested from the in/not in command -- course_id not in (select course_id
+
+
+
+8. Find the names of all students whose name is same as the instructor’s name
+--  select name from student where name in (select name from instructor);
+NAME
+--------------------
+Brandt
+
+
+9.  Find names of instructors with salary greater than that of some (at least one) instructor
+in the Biology department
+-- select name from instructor where salary > some(select salary from instructor where dept_name='Biology');
+
+NAME
+--------------------
+Einstein
+Brandt
+Wu
+Gold
+Kim
+Singh
+Katz
+
+
+
+10. Find the names of all instructors whose salary is greater than the salary of all 
+instructors in the Biology department.
+--  select name from instructor where salary > all(select salary from in
+structor where dept_name='Biology');
+
+NAME
+--------------------
+Katz
+Singh
+Kim
+Gold
+Wu
+Brandt
+Einstein
+
+7 rows selected.
+
+
+11.  Find the departments that have the highest average salary
+--  select dept_name,avg(salary) from instructor group by dept_name having avg(salary)>= all (select avg(salary) from instructor group by dept_name);
+
+DEPT_NAME            AVG(SALARY)
+-------------------- -----------
+Physics                    91000
+
+
+12. Find the names of those departments whose budget is lesser than the average salary 
+of all instructors.
+-- select dept_name from department where budget < all(select avg(salary)
+from instructor);
+
+DEPT_NAME
+--------------------
+History
+Physics
+
+
+
+13. Find all courses taught in both the Fall 2009 semester and in the Spring 2010 semester.
+-- select course_id from teaches where semester='Fall' and year = 2009 and exists (select course_id from teaches where semester = 'Spring' and year = 2010);
+
+COURSE_I
+--------
+CS-101
+CS-347
+PHY-101
+
+**14.  Find all students who have taken all courses offered in the Biology department
+-- select name from student where not exists (select course_id from course where dept_name='Biology' minus select course_id from takes where student.id=takes.id);
+
+no rows selected
+
+15. Find all courses that were offered at most once in 2009
+
+-- select course_id from(select course_id,count(*) count from section where section.year = 2009 group by course_id) where count=1;
+
+COURSE_I
+--------
+BIO-101
+CS-101
+CS-347
+EE-181
+PHY-101
+
+16.
+--select id,name from(select id,name, count(course_id) count from takes natural join student where dept_name = 'Comp. Sci.' group by id,name) where count>=2;
+
+ID    NAME
+----- --------------------
+54321 Williams
+76543 Brown 
+00128 Zhang
+12345 Shankar
+
+
+17.
+-- select dept_name,AVG_SAL from (select dept_name,avg(salary) AVG_SAL from instructor group by dept_name having avg(salary)>42000);
+
+DEPT_NAME               AVG_SAL
+-------------------- ----------
+Elec. Eng.                80000
+Physics                   91000
+Comp. Sci.           77333.3333
+Finance                   85000
+Biology                   72000
+History                   61000
+
