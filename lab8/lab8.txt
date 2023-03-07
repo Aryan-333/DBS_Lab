@@ -1,0 +1,14 @@
+1. Write a PL/SQL block to display the GPA of given student.
+
+set serveroutput on 
+begin
+	s1_roll:='&RollNo';
+
+SELECT RollNo,GPA
+INTO s1_rollno,s1_gpa
+FROM StudentTable
+WHERE RollNo=s1_roll;
+
+dbms_output.put_line('RollNo:'||s1_rollno||'   GPA:'||s1_gpa||');
+end;
+/

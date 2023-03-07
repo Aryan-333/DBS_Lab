@@ -1,0 +1,58 @@
+LAB 4-
+
+17)Delete all the instructors of Finance department.
+-- delete from instructor where dept_name = 'Finance';
+
+2 rows deleted.
+
+-- rollback;
+
+18) Delete all courses in CSE department. 
+
+-- delete from course where dept_name = 'Comp. Sci.'
+
+5 rows deleted.
+
+-- rollback;
+
+
+19)  Transfer all the students from CSE department to finance department.
+-- update student set dept_name = 'Finance' where dept_name = 'Comp. Sci.';
+
+
+
+20) Increase salaries of instructors whose salary is over $100,000 by 3%, and all 
+others receive a 5% raise
+
+--update instructor set salary=(
+    case
+    when salary>100000 then salary * 1.03
+    else salary * 1.05
+    end);
+
+12 rows updated.
+
+
+21) Add all instructors to the student relation with tot_creds set to 0
+-- commit;
+insert into student(select id, name, dept_name,0 from instructor where id not in (select id from student));
+rollback;
+
+11 rows created.
+
+22)  Delete all instructors whose salary is less than the average salary of instructors.
+--  delete from instructor where salary<(select avg(salary) from instructor);
+
+5 rows deleted.
+
+
+
+
+
+LAB 5
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
+
+@ C:\Users\Student\Desktop\SQL_Aryan\week5\CompanyChangedForOrclSQL.sql"
+
+1.) 
