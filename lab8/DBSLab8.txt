@@ -1,0 +1,293 @@
+Q1
+create table studentable(rollno number, gpa numeric(3,1));
+insert into studentable values(1,5.8);
+insert into studentable values(2,6.5);
+insert into studentable values(3,3.4);
+insert into studentable values(4,7.8);
+insert into studentable values(5,9.5);
+
+set serveroutput on
+declare
+	roll studentable.rollno%TYPE;
+	gpa studentable.gpa%TYPE;
+begin
+	roll := '&rno';
+
+	select gpa into gpa
+	from studentable
+	where rollno=roll;
+
+	dbms_output.put_line('-----------------------');	
+	dbms_output.put_line('GPA = '||gpa);
+end;
+/
+
+Enter value for rno: 3
+-----------------------
+GPA = 3.4
+===================================================================
+Q2
+set serveroutput on
+declare
+	roll studentable.rollno%TYPE;
+	gpa studentable.gpa%TYPE;
+	grade varchar(2);
+begin
+	roll := '&rno';
+
+	select gpa into gpa
+	from studentable
+	where rollno=roll;
+
+	if gpa<4 then grade:='F';
+	elsif gpa between 4 and 5 then grade:='E';
+	elsif gpa between 5 and 6 then grade:='D';
+	elsif gpa between 6 and 7 then grade:='C';
+	elsif gpa between 7 and 8 then grade:='B';
+	elsif gpa between 8 and 9 then grade:='A';
+	elsif gpa between 9 and 10 then grade:='A+';
+	end if;
+
+	dbms_output.put_line('-----------------------');	
+	dbms_output.put_line('Grade = '||grade);
+end;
+/
+
+Enter value for rno: 2
+-----------------------
+Grade = C
+===================================================================
+Q3
+set serveroutput on
+declare
+	issue_date DATE;
+	return_date DATE;
+	diff NUMBER;
+	fine number;
+begin
+	issue_date := TO_DATE('&issue_date');
+	return_date := TO_DATE('&return_date');
+
+	diff:= return_date - issue_date;
+	
+	if diff<=7 then fine:=0;
+	elsif diff between 8 and 15 then fine:=diff*1;
+	elsif diff between 16 and 30 then fine:=diff*2;
+	elsif diff>30 then fine:=diff*5;
+	end if;
+
+	dbms_output.put_line('-------------------------');
+	dbms_output.put_line('Days diff = '||diff);
+	dbms_output.put_line('Fine = Rs.'||fine);
+end;
+/
+
+Enter value for issue_date: 13-MAR-2023
+Enter value for return_date: 21-MAY-2023
+-------------------------
+Days diff = 69
+Fine = Rs.345
+===================================================================
+Q4
+set serveroutput on
+declare
+	gpa studentable.gpa%TYPE;
+	grade varchar(2);
+	i number := 1;
+begin
+	dbms_output.put_line('-----------------------');
+	loop
+		select gpa into gpa
+		from studentable
+		where rollno=i;
+
+		if gpa<4 then grade:='F';
+		elsif gpa between 4 and 5 then grade:='E';
+		elsif gpa between 5 and 6 then grade:='D';
+		elsif gpa between 6 and 7 then grade:='C';
+		elsif gpa between 7 and 8 then grade:='B';
+		elsif gpa between 8 and 9 then grade:='A';
+		elsif gpa between 9 and 10 then grade:='A+';
+		end if;
+
+		dbms_output.put_line('Roll No. : '||i||'	Grade = '||grade);	
+		i:=i+1;
+		if i>5 then exit;
+		end if;
+	end loop;
+end;
+/
+
+-----------------------
+Roll No. : 1    Grade = D
+Roll No. : 2    Grade = C
+Roll No. : 3    Grade = F
+Roll No. : 4    Grade = B
+Roll No. : 5    Grade = A+
+===================================================================
+Q5
+alter table studentable add(lettergrade varchar(2));
+set serveroutput on
+declare
+	gpa studentable.gpa%TYPE;
+	grade varchar(2);
+	i number := 1;
+begin
+	while i<=5
+	loop
+		select gpa into gpa
+		from studentable
+		where rollno=i;
+
+		if gpa between 0 and 4 then grade:='F';
+		elsif gpa between 4 and 5 then grade:='E';
+		elsif gpa between 5 and 6 then grade:='D';
+		elsif gpa between 6 and 7 then grade:='C';
+		elsif gpa between 7 and 8 then grade:='B';
+		elsif gpa between 8 and 9 then grade:='A';
+		elsif gpa between 9 and 10 then grade:='A+';
+		end if;
+
+		update studentable set lettergrade=grade where rollno=i;	
+		i:=i+1;
+	end loop;
+end;
+/
+
+    ROLLNO        GPA LE
+---------- ---------- --
+         1        5.8 D
+         2        6.5 C
+         3        3.4 F
+         4        7.8 B
+         5        9.5 A+
+===================================================================
+Q6
+set serveroutput on
+declare
+	gpa studentable.gpa%TYPE;
+	maxval number;
+begin
+	select gpa into maxval
+	from studentable
+	where rollno=1;
+
+	for i in 2..5 loop
+		select gpa into gpa
+		from studentable
+		where rollno=i;
+
+		if gpa>maxval then maxval:=gpa;
+		end if;
+	end loop;
+
+	dbms_output.put_line('-----------------------');
+	dbms_output.put_line('Max GPA = '||maxval);
+end;
+/
+
+-----------------------
+Max GPA = 9.5
+===================================================================
+Q7
+set serveroutput on
+declare
+	gpa studentable.gpa%TYPE;
+	grade varchar(2);
+	i number := 1;
+begin
+	dbms_output.put_line('-----------------------');
+	<<print_now>>
+	loop
+		select gpa into gpa
+		from studentable
+		where rollno=i;
+
+		if gpa<4 then grade:='F';
+		elsif gpa between 4 and 5 then grade:='E';
+		elsif gpa between 5 and 6 then grade:='D';
+		elsif gpa between 6 and 7 then grade:='C';
+		elsif gpa between 7 and 8 then grade:='B';
+		elsif gpa between 8 and 9 then grade:='A';
+		elsif gpa between 9 and 10 then grade:='A+';
+		end if;
+
+		dbms_output.put_line('Roll No : '||i||'	Grade = '||grade);
+
+		i:=i+1;
+		if i<=5 then GOTO print_now;
+		else exit;
+		end if;
+	end loop;
+end;
+/
+===================================================================
+Q8
+set serveroutput on
+declare
+    multiple_name exception;
+    inst_name instructor.name%TYPE;
+    inst_id instructor.id%TYPE;
+    inst_sal instructor.salary%TYPE;
+    inst_dept instructor.dept_name%TYPE;
+    name_count number;
+begin
+    inst_name:= '&name';
+
+    select count(*)
+    into name_count
+    from instructor
+    where name=inst_name;
+
+    select id,salary,dept_name
+    into inst_id,inst_sal,inst_dept
+    from instructor
+    where name=inst_name;
+
+
+    if name_count>1 then RAISE multiple_name;
+    else
+    dbms_output.put_line('Name : '||inst_name);
+    dbms_output.put_line('ID : '||inst_id);
+    dbms_output.put_line('Salary : '||inst_sal);
+    dbms_output.put_line('Department : '||inst_dept);
+    end if;
+
+exception
+    WHEN multiple_name then dbms_output.put_line('Mulitple instructors with same name');
+    WHEN others then dbms_output.put_line('No instructor found');
+end;
+/
+===================================================================
+Q9
+set serveroutput on
+declare
+	not_exist Exception;
+	gpa studentable.gpa%TYPE;
+	grade varchar(2);
+	i number := 1;
+begin
+	while i<=5
+	loop
+		select gpa into gpa
+		from studentable
+		where rollno=i;
+
+		if gpa between 0 and 4 then grade:='F';
+		elsif gpa between 4 and 5 then grade:='E';
+		elsif gpa between 5 and 6 then grade:='D';
+		elsif gpa between 6 and 7 then grade:='C';
+		elsif gpa between 7 and 8 then grade:='B';
+		elsif gpa between 8 and 9 then grade:='A';
+		elsif gpa between 9 and 10 then grade:='A+';
+		else raise not_exist;
+		end if;
+
+		update studentable set lettergrade=grade where rollno=i;	
+		i:=i+1;
+	end loop;
+exception	
+	when not_exist then dbms_output.put_line('GPA out of bounds');
+end;
+/
+===================================================================
